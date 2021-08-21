@@ -1,0 +1,51 @@
+._homePage {
+  ._navbar {
+    width: 100%;
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    background-color: #ffffff66;
+    color: white !important;
+    display: flex;
+    justify-content: space-between;
+    height: 70px;
+    align-items: center;
+    padding: 0 40px;
+    ._logo {
+      h2 {
+        font-size: 2rem;
+        margin: 0;
+        font-weight: bold;
+        color: white;
+      }
+    }
+    ._account {
+      display: flex;
+      ._username {
+        font-weight: bold;
+      }
+      ._accountBtn {
+        a {
+          padding: 8px 35px;
+          margin-left: 20px;
+          border: 1px solid white;
+          width: 200px;
+          border-radius: 10px;
+          color: white;
+          font-weight: bold;
+        }
+      }
+    }
+  }
+  ._footer {
+    width: 100%;
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    background-color: #ffffff66;
+    color: white !important;
+    text-align: center;
+    padding: 8px 0;
+    p {
+      margin: 0;
+    }
+  }
+}

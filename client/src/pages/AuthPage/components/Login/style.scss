@@ -1,0 +1,84 @@
+._authForm {
+  width: 90%;
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  background-color: #ffffff66;
+  border-radius: 12px;
+  padding: 25px 15px;
+  color: white !important;
+  h3 {
+    text-align: center;
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: white;
+  }
+  ._input {
+    padding-top: 15px;
+  }
+  ._action {
+    text-align: center;
+    padding: 20px 0;
+    #_actionBtn {
+      background: transparent;
+      border: 1px solid white;
+      outline: none;
+      border-radius: 10px;
+      padding: 4px 40px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: 0.3s;
+      &:hover {
+        background: white;
+        color: black;
+      }
+    }
+  }
+  ._changeForm {
+    text-align: center;
+    margin-top: 30px;
+    #_changeFormBtn {
+      cursor: pointer;
+      font-weight: bold;
+      text-decoration: underline;
+    }
+  }
+
+  ._connectSocial {
+    padding-top: 10px;
+    ._connectTitle {
+      display: flex;
+      justify-content: center;
+      ._line {
+        width: 25%;
+        border-bottom: 1px solid white;
+        height: 12px;
+        margin: 0 5px;
+      }
+    }
+  }
+  ._connectIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 0;
+    ._connectItem {
+      border: 1px solid white;
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      margin: 0 5px;
+      i {
+        font-size: 1.4rem;
+      }
+    }
+  }
+}
+
+.ant-input-affix-wrapper {
+  border-radius: 10px !important;
+  border: none !important;
+}
