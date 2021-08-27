@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./style.scss";
 import { Link, useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { LOGOUT } from "../../constants/actionTypes";
+import decode from "jwt-decode";
 import Home from "./components/Home";
 import Landing from "./components/Landing";
 export default function AppHomePage() {
@@ -10,13 +11,17 @@ export default function AppHomePage() {
   const history = useHistory();
   const dispatch = useDispatch();
 
-  // useEffect(() => {
-  //   const token = user?.token;
+  useEffect(() => {
+    const token = user?.token;
 
-  //   //JWT ...
+    //JWT ...
+    if (token) {
+      const decodedToken = decode(token);
+      if (decodedToken.exp * 1000 < new Date().getTime()) logoutHandler();
+    }
 
-  //   setUser(JSON.parse(localStorage.getItem("profile")));
-  // }, []);
+    setUser(JSON.parse(localStorage.getItem("profile")));
+  }, []);
 
   const logoutHandler = () => {
     dispatch({ type: LOGOUT });

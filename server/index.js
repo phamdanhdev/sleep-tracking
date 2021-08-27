@@ -1,24 +1,26 @@
 import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
-
+import dotenv from "dotenv";
 import userRoutes from "./routes/users.js";
 import entryRoutes from "./routes/entries.js";
 
 const app = express();
+dotenv.config();
 
 app.use(cors());
 app.use(express.json());
 
 app.use("/user", userRoutes);
 app.use("/entry", entryRoutes);
+app.get("/", (req, res) => {
+  res.send("Sleep tracking hello");
+});
 
-const CONNECTION_URL =
-  "mongodb+srv://phamdanhdev:phamdanhdev123@cluster0.pqhg4.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
 const PORT = process.env.PORT || 5000;
 
 mongoose
-  .connect(CONNECTION_URL, {
+  .connect(process.env.CONNECTION_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })

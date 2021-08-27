@@ -2,6 +2,12 @@ import React from "react";
 import { Link } from "react-router-dom";
 import "./style.scss";
 import SleepImg from "../../../../assets/images/sleep.png";
+import AddNow from "../../../../assets/images/addnew/addnewbtn.PNG";
+import PopUp from "../../../../assets/images/addnew/popup.PNG";
+import PopUpAddNow from "../../../../assets/images/addnew/popupaddnew.PNG";
+import Table from "../../../../assets/images/tracking/table.PNG";
+import Graph from "../../../../assets/images/tracking/graph.PNG";
+import Info from "../../../../assets/images/tracking/info.PNG";
 import { Image } from "antd";
 
 export default function Landing() {
@@ -31,15 +37,15 @@ export default function Landing() {
         <h4>Add new record</h4>
         <div className="_images">
           <div className="_imgItem">
-            <Image src={SleepImg} />
+            <Image src={AddNow} />
             <p>Hit the "+ New entry" button.</p>
           </div>
           <div className="_imgItem">
-            <Image src={SleepImg} />
+            <Image src={PopUp} />
             <p>Fill some infomation.</p>
           </div>
           <div className="_imgItem">
-            <Image src={SleepImg} />
+            <Image src={PopUpAddNow} />
             <p>Just "Add now".</p>
           </div>
         </div>
@@ -48,15 +54,15 @@ export default function Landing() {
         <h4>Tracking</h4>
         <div className="_images">
           <div className="_imgItem">
-            <Image src={SleepImg} />
+            <Image src={Table} />
             <p>Table</p>
           </div>
           <div className="_imgItem">
-            <Image src={SleepImg} />
+            <Image src={Graph} />
             <p>Graph</p>
           </div>
           <div className="_imgItem">
-            <Image src={SleepImg} />
+            <Image src={Info} />
             <p>More infomation</p>
           </div>
         </div>

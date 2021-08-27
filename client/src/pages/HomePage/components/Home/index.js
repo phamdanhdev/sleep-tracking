@@ -49,10 +49,97 @@ export default function Home() {
   const newEntryForm = useRef(initialNewFormState);
   const editEntryForm = useRef(initialEditFormState);
   const currentEditEntryForm = useRef(initialEditFormState);
+  //data analysis
+  const [averageSleepDuration, setAverageSleepDuration] = useState(0);
+  const [averageSleepTime, setAverageSleepTime] = useState(0);
+  const [averageWakeUpTime, setAverageWakeUpTime] = useState(0);
+  const [averageSleep6h, setAverageSleep6h] = useState(0);
+  const [averageSleep8h, setAverageSleep8h] = useState(0);
+  //table
+  const tableSleepDuration = useRef([]);
+  const tableTimeLine = useRef([]);
 
   useEffect(() => {
     dispatch(getEntries());
   }, [dispatch]);
+
+  useEffect(() => {
+    const data = entries.slice(0, 7);
+    setAverageSleepDuration(countAverageSleepDuration(data));
+    setAverageSleepTime(countAverageSleepTime(data));
+    setAverageWakeUpTime(countAverageWakeUpTime(data));
+    setAverageSleep6h(countAverageSleep6h(data));
+    setAverageSleep8h(countAverageSleep8h(data));
+    //chart
+    setDataChartDay(entries);
+  }, [entries]);
+
+  const countAverageSleepDuration = (data) => {
+    const res = (
+      data.reduce((acc, cur) => {
+        return (acc += parseInt(cur.sleepDuration));
+      }, 0) /
+      data.length /
+      60
+    ).toFixed(1);
+    if (isNaN(res)) return 0;
+    return res;
+  };
+  const countAverageSleepTime = (data) => {
+    const totalHour = data.reduce((acc, cur) => {
+      return (acc += getHour(cur.sleepTime));
+    }, 0);
+    const totalMinute = data.reduce((acc, cur) => {
+      return (acc += getMinute(cur.sleepTime));
+    }, 0);
+    const res = `${timeNumToString(
+      Math.floor(totalHour / data.length)
+    )}:${timeNumToString(Math.floor(totalMinute / data.length))}`;
+    if (isNaN(Math.floor(totalHour / data.length))) return "00:00";
+    return res;
+  };
+  const countAverageWakeUpTime = (data) => {
+    const totalHour = data.reduce((acc, cur) => {
+      return (acc += getHour(cur.wakeUpTime));
+    }, 0);
+    const totalMinute = data.reduce((acc, cur) => {
+      return (acc += getMinute(cur.wakeUpTime));
+    }, 0);
+    const res = `${timeNumToString(
+      Math.floor(totalHour / data.length)
+    )}:${timeNumToString(Math.floor(totalMinute / data.length))}`;
+    if (isNaN(Math.floor(totalMinute / data.length))) return "00:00";
+    return res;
+  };
+
+  const timeNumToString = (num) => {
+    if (num < 10) {
+      return `0${num}`;
+    } else {
+      return "" + num;
+    }
+  };
+
+  const countAverageSleep6h = (data) => {
+    const res = data.reduce((acc, cur) => {
+      if (parseInt(cur.sleepDuration) < 360) {
+        return (acc += 1);
+      } else {
+        return acc;
+      }
+    }, 0);
+    return res;
+  };
+  const countAverageSleep8h = (data) => {
+    const res = data.reduce((acc, cur) => {
+      if (parseInt(cur.sleepDuration) > 480) {
+        return (acc += 1);
+      } else {
+        return acc;
+      }
+    }, 0);
+    return res;
+  };
 
   const handleChangeNewDate = (date, dateString) => {
     newEntryForm.current = { ...newEntryForm.current, date: dateString };
@@ -249,8 +336,181 @@ export default function Home() {
   };
 
   const onChangeTimeLine = (e) => {
-    console.log("radio4 checked", e.target.value);
+    switch (e.target.value) {
+      case "day":
+        setDataChartDay(entries);
+        break;
+      case "week":
+        setDataChartWeek(entries);
+        break;
+      case "month":
+        setDataChartMonth(entries);
+        break;
+      default:
+        break;
+    }
+
     setTimeLine(e.target.value);
+  };
+
+  const groupDate = (entries) => {
+    let group = [];
+    let groupTemp = [];
+    let entryTemp = null;
+
+    entries.forEach((entry, index, array) => {
+      if (index === 0) {
+        entryTemp = entry;
+        groupTemp.push(entry);
+        if (array.length === 1) return groupTemp;
+        return;
+      }
+      if (entry.date === entryTemp.date) {
+        groupTemp.push(entry);
+      }
+      if (entry.date !== entryTemp.date || index === array.length - 1) {
+        if (groupTemp.length > 1) {
+          let totalSleepDuration = groupTemp.reduce((acc, cur) => {
+            return (acc += parseInt(cur.sleepDuration));
+          }, 0);
+          group.push({
+            ...entryTemp,
+            sleepDuration: Math.floor(
+              totalSleepDuration / groupTemp.length
+            ).toString(),
+          });
+          entryTemp = entry;
+          groupTemp = [];
+          groupTemp.push(entry);
+        } else {
+          group.push(groupTemp[0]);
+          if (index === array.length - 1) {
+            group.push(entry);
+            return group;
+          }
+          entryTemp = entry;
+          groupTemp[0] = entry;
+        }
+      }
+    });
+    return group;
+  };
+
+  const groupMonth = (entries) => {
+    let group = [];
+    let groupTemp = [];
+    let entryTemp = null;
+
+    entries.forEach((entry, index, array) => {
+      if (index === 0) {
+        entryTemp = entry;
+        groupTemp.push(entry);
+        if (array.length === 1) return groupTemp;
+        return;
+      }
+      if (entry.date.slice(3) === entryTemp.date.slice(3)) {
+        groupTemp.push(entry);
+      }
+      if (
+        entry.date.slice(3) !== entryTemp.date.slice(3) ||
+        index === array.length - 1
+      ) {
+        if (groupTemp.length > 1) {
+          let totalSleepDuration = groupTemp.reduce((acc, cur) => {
+            return (acc += parseInt(cur.sleepDuration));
+          }, 0);
+          group.push({
+            ...entryTemp,
+            sleepDuration: Math.floor(
+              totalSleepDuration / groupTemp.length
+            ).toString(),
+          });
+          entryTemp = entry;
+          groupTemp = [];
+          groupTemp.push(entry);
+        } else {
+          group.push(groupTemp[0]);
+          if (index === array.length - 1) {
+            group.push(entry);
+            return group;
+          }
+          entryTemp = entry;
+          groupTemp[0] = entry;
+        }
+      }
+    });
+    return group;
+  };
+
+  const setDataChartDay = (entries) => {
+    const data = groupDate(entries)
+      .slice(0, 7)
+      .sort(
+        (a, b) =>
+          a.date.split("/").reverse().join("") -
+          b.date.split("/").reverse().join("")
+      );
+    const tSleepDuration = data.map((entry) =>
+      (parseInt(entry.sleepDuration) / 60).toFixed(1)
+    );
+    const tTimeLine = data.map((entry) => entry.date);
+    tableSleepDuration.current = tSleepDuration;
+    tableTimeLine.current = tTimeLine;
+  };
+
+  const setDataChartWeek = (entries) => {
+    const data = groupDate(entries)
+      .slice(0, 49)
+      .sort(
+        (a, b) =>
+          a.date.split("/").reverse().join("") -
+          b.date.split("/").reverse().join("")
+      );
+    const res = [];
+    let resTemp = [];
+    data.forEach((entry, index, array) => {
+      resTemp.push(entry);
+      let date = "";
+      let totalSleepDuration = 0;
+      if (resTemp.length === 7 || index === array.length - 1) {
+        resTemp.forEach((cur, index, arr) => {
+          totalSleepDuration += +cur.sleepDuration;
+          if (index === 0) {
+            date += `${cur.date} - `;
+          }
+          if (index === arr.length - 1) {
+            date += cur.date;
+          }
+        });
+
+        const week = {
+          date: date,
+          sleepDuration: totalSleepDuration / resTemp.length,
+        };
+        res.push(week);
+        resTemp = [];
+      }
+    });
+    const tSleepDuration = res.map((e) => e.sleepDuration);
+    const tTimeLine = res.map((e) => e.date);
+    tableSleepDuration.current = tSleepDuration;
+    tableTimeLine.current = tTimeLine;
+  };
+
+  const setDataChartMonth = (entries) => {
+    data = groupMonth(entries)
+      .slice(0, 7)
+      .sort(
+        (a, b) =>
+          a.date.split("/").reverse().join("") -
+          b.date.split("/").reverse().join("")
+      );
+    const tSleepDuration = data.map((entry) =>
+      (parseInt(entry.sleepDuration) / 60).toFixed(1)
+    );
+    const tTimeLine = data.map((entry) => entry.date.slice(3));
+    tableSleepDuration.current = tSleepDuration;
+    tableTimeLine.current = tTimeLine;
   };
 
   function confirmDelete(entry) {
@@ -429,19 +689,19 @@ export default function Home() {
           <div className="_infoDetail">
             <h1>Good</h1>
             <p>
-              Average sleep time: <span>7.8h/day</span>
+              Average sleep duration: <span>{averageSleepDuration}h/day</span>
             </p>
             <p>
-              Average wake-up time: <span>6h35</span>
+              Average wake up time: <span>{averageWakeUpTime}</span>
             </p>
             <p>
-              Average bed time: <span>23h25</span>
+              Average sleep time: <span>{averageSleepTime}</span>
             </p>
             <p>
-              Days sleep &lt; 8h: <span>3</span>
+              Days sleep &gt; 8h: <span>{averageSleep8h}</span>
             </p>
             <p>
-              Days sleep &gt; 6h: <span>2</span>
+              Days sleep &lt; 6h: <span>{averageSleep6h}</span>
             </p>
             <p className="_note">*Based on the last 7 days</p>
           </div>
@@ -467,6 +727,10 @@ export default function Home() {
               title="Sleep duration"
               dataIndex="sleepDuration"
               key="date"
+              render={(text, record) => {
+                const sleepDurNum = parseInt(record.sleepDuration);
+                return `${Math.floor(sleepDurNum / 60)}h${sleepDurNum % 60}m`;
+              }}
             />
             <Column
               title="Action"
@@ -517,19 +781,11 @@ export default function Home() {
         <div className="_lineChart">
           <Line
             data={{
-              labels: [
-                "07/08",
-                "08/08",
-                "09/08",
-                "10/08",
-                "11/08",
-                "12/08",
-                "13/08",
-              ],
+              labels: tableTimeLine.current,
               datasets: [
                 {
-                  data: [6, 6.5, 8, 7, 5, 9, 5],
-                  label: "Sleep time",
+                  data: tableSleepDuration.current,
+                  label: "Hours of sleep (h)",
                   borderColor: "#3e95cd",
                   fill: true,
                 },
