@@ -26,7 +26,7 @@ export default function Landing() {
             its heart, it tracks your sleep quality by analyze the information
             you provided.
           </p>
-          <Link to="/auth">Register now!</Link>
+          <Link to="/auth/register">Register now!</Link>
         </div>
         <div className="_image">
           <img src={SleepImg} alt="sleep-img" />

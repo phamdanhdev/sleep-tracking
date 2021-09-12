@@ -50,6 +50,7 @@ export default function Home() {
   const editEntryForm = useRef(initialEditFormState);
   const currentEditEntryForm = useRef(initialEditFormState);
   //data analysis
+  const [sleepStatus, setSleepStatus] = useState("Good");
   const [averageSleepDuration, setAverageSleepDuration] = useState(0);
   const [averageSleepTime, setAverageSleepTime] = useState(0);
   const [averageWakeUpTime, setAverageWakeUpTime] = useState(0);
@@ -83,6 +84,13 @@ export default function Home() {
       60
     ).toFixed(1);
     if (isNaN(res)) return 0;
+    if (res < 8 && res >= 6) {
+      setSleepStatus("Medium");
+    } else if (res < 6) {
+      setSleepStatus("Poor");
+    } else {
+      setSleepStatus("Good");
+    }
     return res;
   };
   const countAverageSleepTime = (data) => {
@@ -92,9 +100,10 @@ export default function Home() {
     const totalMinute = data.reduce((acc, cur) => {
       return (acc += getMinute(cur.sleepTime));
     }, 0);
+    const averageTime = (totalHour * 60 + totalMinute) / data.length;
     const res = `${timeNumToString(
-      Math.floor(totalHour / data.length)
-    )}:${timeNumToString(Math.floor(totalMinute / data.length))}`;
+      Math.floor(averageTime / 60)
+    )}:${timeNumToString(Math.floor(averageTime % 60))}`;
     if (isNaN(Math.floor(totalHour / data.length))) return "00:00";
     return res;
   };
@@ -105,10 +114,11 @@ export default function Home() {
     const totalMinute = data.reduce((acc, cur) => {
       return (acc += getMinute(cur.wakeUpTime));
     }, 0);
+    const averageTime = (totalHour * 60 + totalMinute) / data.length;
     const res = `${timeNumToString(
-      Math.floor(totalHour / data.length)
-    )}:${timeNumToString(Math.floor(totalMinute / data.length))}`;
-    if (isNaN(Math.floor(totalMinute / data.length))) return "00:00";
+      Math.floor(averageTime / 60)
+    )}:${timeNumToString(Math.floor(averageTime % 60))}`;
+    if (isNaN(Math.floor(totalHour / data.length))) return "00:00";
     return res;
   };
 
@@ -554,6 +564,20 @@ export default function Home() {
     editEntryForm.current = editEntry;
   };
 
+  const renderStatus = (sleepStatus) => {
+    switch (sleepStatus) {
+      case "Good":
+        return <h1 style={{ color: "#8aff8ad9" }}>Good</h1>;
+      case "Medium":
+        return <h1 style={{ color: "yellow" }}>Medium</h1>;
+      case "Poor":
+        return <h1 style={{ color: "#dc1717" }}>Poor</h1>;
+
+      default:
+        break;
+    }
+  };
+
   return (
     <div className="_home">
       <div className="_stat">
@@ -572,6 +596,7 @@ export default function Home() {
                 visible={isModalVisible}
                 destroyOnClose={true}
                 footer={null}
+                closable={false}
               >
                 <div className="_modalDate">
                   <span>Date: </span>
@@ -631,6 +656,7 @@ export default function Home() {
                 visible={isEditModalVisible}
                 destroyOnClose={true}
                 footer={null}
+                closable={false}
               >
                 <div className="_modalDate">
                   <span>Date: </span>
@@ -687,7 +713,7 @@ export default function Home() {
             </div>
           </div>
           <div className="_infoDetail">
-            <h1>Good</h1>
+            {renderStatus(sleepStatus)}
             <p>
               Average sleep duration: <span>{averageSleepDuration}h/day</span>
             </p>

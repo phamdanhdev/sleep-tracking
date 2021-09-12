@@ -22,6 +22,7 @@
       display: flex;
       ._username {
         font-weight: bold;
+        transform: translateY(8px);
       }
       ._accountBtn {
         a {
@@ -32,6 +33,16 @@
           border-radius: 10px;
           color: white;
           font-weight: bold;
+        }
+        p {
+          padding: 8px 35px;
+          margin-left: 20px;
+          margin-bottom: 0;
+          border: 1px solid white;
+          border-radius: 10px;
+          color: white;
+          font-weight: bold;
+          cursor: pointer;
         }
       }
     }

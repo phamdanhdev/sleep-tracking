@@ -64,6 +64,8 @@ const Register = React.memo(({ handleChangeFrom }) => {
       case "password":
         if (e.target.value.trim().length === 0) {
           setPasswordValid("Password cannot empty!");
+        } else if (e.target.value.trim().length <= 8) {
+          setPasswordValid("The password field must be at least 8 characters!");
         } else {
           setPasswordValid("");
         }

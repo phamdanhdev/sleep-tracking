@@ -39,11 +39,11 @@ export default function AppHomePage() {
           <div className="_username">{user ? user?.result?.name : ""}</div>
           <div className="_accountBtn">
             {user ? (
-              <a href="." onClick={logoutHandler}>
+              <p onClick={logoutHandler}>
                 Logout
-              </a>
+              </p>
             ) : (
-              <Link to="/auth">Login</Link>
+              <Link to="/auth/login">Login</Link>
             )}
           </div>
         </div>

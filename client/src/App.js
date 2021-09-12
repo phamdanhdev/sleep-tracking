@@ -11,7 +11,7 @@ function App() {
           <Route exact path="/">
             <AppHomePage />
           </Route>
-          <Route exact path="/auth">
+          <Route exact path="/auth/:isLogin">
             <AppAuthPage />
           </Route>
         </Switch>
